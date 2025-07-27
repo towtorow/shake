@@ -29,15 +29,14 @@
           }
         }
 
-        // 흔들림 감지 시작
         const shakeEvent = new Shake({ threshold: 15, timeout: 1000 });
         shakeEvent.start();
 
         const img = document.getElementById('myImage');
 
         window.addEventListener('shake', () => {
-          // 토글 동작
-          img.style.display = (img.style.display === 'none') ? 'block' : 'none';
+          const isHidden = window.getComputedStyle(img).display === 'none';
+          img.style.display = isHidden ? 'block' : 'none';
         }, false);
       }
 

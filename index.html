@@ -18,8 +18,15 @@
   <script src="https://cdn.jsdelivr.net/gh/alexgibson/shake.js/shake.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const img = document.getElementById('myImage');
+
+      // 이미지 클릭 시 숨기기
+      img.addEventListener('click', () => {
+        img.style.display = 'none';
+      });
+
       async function initMotionDetection() {
-        // iOS 권한 요청
+        // iOS 권한 요청 (필요한 경우)
         if (typeof DeviceMotionEvent !== 'undefined' &&
             typeof DeviceMotionEvent.requestPermission === 'function') {
           try {
@@ -30,23 +37,15 @@
           }
         }
 
-        const img = document.getElementById('myImage');
-
-        // 흔들면 이미지 보이기 (숨겨져 있을 때만)
         const shakeEvent = new Shake({ threshold: 15, timeout: 1000 });
         shakeEvent.start();
 
+        // 흔들릴 때 이미지 보이기 (숨겨져 있을 때만)
         window.addEventListener('shake', () => {
-          const isHidden = window.getComputedStyle(img).display === 'none';
-          if (isHidden) {
+          if (window.getComputedStyle(img).display === 'none') {
             img.style.display = 'block';
           }
         }, false);
-
-        // 이미지 클릭 시 숨기기
-        img.addEventListener('click', () => {
-          img.style.display = 'none';
-        });
       }
 
       initMotionDetection();

@@ -16,24 +16,28 @@
 
   <script src="https://cdn.jsdelivr.net/gh/alexgibson/shake.js/shake.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      if (typeof DeviceMotionEvent !== 'undefined' &&
-          typeof DeviceMotionEvent.requestPermission === 'function') {
-        try {
-          const permission = await DeviceMotionEvent.requestPermission();
-          if (permission !== 'granted') return;
-        } catch (e) {
-          return;
+    document.addEventListener('DOMContentLoaded', () => {
+      async function initMotionDetection() {
+        if (typeof DeviceMotionEvent !== 'undefined' &&
+            typeof DeviceMotionEvent.requestPermission === 'function') {
+          try {
+            const permission = await DeviceMotionEvent.requestPermission();
+            if (permission !== 'granted') return;
+          } catch (e) {
+            return;
+          }
         }
+
+        const shakeEvent = new Shake({ threshold: 15, timeout: 1000 });
+        shakeEvent.start();
+
+        window.addEventListener('shake', () => {
+          document.getElementById('myImage').style.display = 'block';
+          shakeEvent.stop(); // 흔들림 한 번만 감지하려면 유지
+        }, false);
       }
 
-      const shakeEvent = new Shake({ threshold: 15, timeout: 1000 });
-      shakeEvent.start();
-
-      window.addEventListener('shake', () => {
-        document.getElementById('myImage').style.display = 'block';
-        shakeEvent.stop(); // 필요시 제거
-      }, false);
+      initMotionDetection();
     });
   </script>
 </body>

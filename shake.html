@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>흔들림 디버깅</title>
+  <style>
+    body {
+      text-align: center;
+      padding: 50px;
+    }
+    #image {
+      display: none;
+      width: 300px;
+      margin-top: 20px;
+    }
+    #startButton {
+      font-size: 18px;
+      padding: 10px 20px;
+    }
+    #log {
+      margin-top: 20px;
+      font-family: monospace;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <h1>시작 버튼 누르고 폰을 흔들어보세요!</h1>
+  <button id="startButton">시작</button>
+  <div id="log">로그:</div>
+  <img id="image" src="https://via.placeholder.com/300x200.png?text=Hello!" alt="이미지" />
+
+  <script>
+    const image = document.getElementById("image");
+    const logEl = document.getElementById("log");
+
+    let lastX = null, lastY = null, lastZ = null;
+    let threshold = 12;
+    let lastTime = 0;
+
+    function log(msg) {
+      logEl.innerText = "로그: " + msg;
+    }
+
+    function handleMotion(event) {
+      const acc = event.accelerationIncludingGravity;
+      if (!acc) return log("가속도 없음");
+
+      const curTime = new Date().getTime();
+      if ((curTime - lastTime) < 150) return;
+      lastTime = curTime;
+
+      const { x, y, z } = acc;
+
+      if (lastX !== null) {
+        const delta = Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
+        log("감지값: " + delta.toFixed(2));
+
+        if (delta > threshold) {
+          log("흔들림 감지됨!");
+          image.style.display = "block";
+          window.removeEventListener("devicemotion", handleMotion);
+        }
+      }
+
+      lastX = x;
+      lastY = y;
+      lastZ = z;
+    }
+
+    async function startMotionListener() {
+      if (typeof DeviceMotionEvent !== "undefined" &&
+          typeof DeviceMotionEvent.requestPermission === "function") {
+        try {
+          const result = await DeviceMotionEvent.requestPermission();
+          if (result !== "granted") {
+            log("iOS 권한 거부됨");
+            alert("모션 권한 필요");
+            return;
+          }
+        } catch (err) {
+          log("권한 요청 실패: " + err);
+          return;
+        }
+      }
+
+      log("센서 리스너 등록됨");
+      window.addEventListener("devicemotion", handleMotion);
+    }
+
+    document.getElementById("startButton").addEventListener("click", () => {
+      startMotionListener();
+      document.getElementById("startButton").disabled = true;
+    });
+  </script>
+</body>
+</html>

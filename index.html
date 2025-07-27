@@ -18,6 +18,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       async function initMotionDetection() {
+        // iOS 권한 요청
         if (typeof DeviceMotionEvent !== 'undefined' &&
             typeof DeviceMotionEvent.requestPermission === 'function') {
           try {
@@ -28,12 +29,15 @@
           }
         }
 
+        // 흔들림 감지 시작
         const shakeEvent = new Shake({ threshold: 15, timeout: 1000 });
         shakeEvent.start();
 
+        const img = document.getElementById('myImage');
+
         window.addEventListener('shake', () => {
-          document.getElementById('myImage').style.display = 'block';
-          shakeEvent.stop(); // 흔들림 한 번만 감지하려면 유지
+          // 토글 동작
+          img.style.display = (img.style.display === 'none') ? 'block' : 'none';
         }, false);
       }
 

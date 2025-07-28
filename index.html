@@ -8,9 +8,15 @@
       width: 250px;
       cursor: pointer;
     }
+    #startButton {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <button id="startButton">시작</button>
   <img id="myImage" 
        src="https://cdn.pixabay.com/photo/2015/11/15/09/11/wall-safe-1044168_1280.jpg" 
        alt="image" />
@@ -19,6 +25,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const img = document.getElementById('myImage');
+      const startBtn = document.getElementById('startButton');
 
       // 이미지 클릭 시 숨기기
       img.addEventListener('click', () => {
@@ -48,7 +55,11 @@
         }, false);
       }
 
-      initMotionDetection();
+      // 시작 버튼 클릭 시 초기화
+      startBtn.addEventListener('click', () => {
+        initMotionDetection();
+        startBtn.style.display = 'none'; // 버튼은 숨김 처리
+      });
     });
   </script>
 </body>
